@@ -16,9 +16,9 @@ public class Game extends JPanel implements ActionListener {
     private void createGame() {
 
         // Create player object
-        items.add(new Player(100, 100, 100, 100, setControls()));
-        items.add(new Enemy(300, 200, 50, 50));
-        items.add(new Enemy(350, 300, 50, 50));
+        items.add(new Player(64, 64, 32, 32, setControls()));
+        items.add(new Enemy(128, 128, 32, 32));
+        items.add(new Enemy(256, 256, 32, 32));
 
         // Set background color
         setBackground(Color.WHITE);
