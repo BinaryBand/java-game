@@ -2,40 +2,32 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
-import java.util.Random;
 
 public class Game extends JPanel implements ActionListener {
 
-    private int width, height;
     private ArrayList<Object> items = new ArrayList<>();
-    private ArrayList<Object> removedItems = new ArrayList<>();
+    private ArrayList<Platform> platforms = new ArrayList<>();
+    private ArrayList<Object> collisionList = new ArrayList<>();
 
-    Game(int width, int height) {
-
-        this.width = width;
-        this.height = height;
+    Game() {
 
         createGame();
     }
 
     private void createGame() {
 
-        // Create player object
-        this.items.add(new Player(100, 100, 10, 10, setControls()));
+        // Create room
+        items.add(new Player(100, 100, 100, 100, setControls()));
 
-        // Create a bunch of random objects
-        Random rand = new Random();
-        for (int i = 0; i < 10000; i++) {
-
-            this.items.add(new Particle(Math.abs(rand.nextInt() % 720), Math.abs(rand.nextInt() % 480), 10, 10, rand));
-        }
+        // Create platforms
+        platforms.add(new Platform(0, 200, 300, 250));
+        platforms.add(new Platform(300, 250, 500, 270));
 
         // Set background color
         setBackground(Color.WHITE);
 
         // Frame rate
-        int fps = 60;
-        int DELAY = 1000 / fps;
+        int DELAY = 1000 / 30;
 
         Timer timer = new Timer(DELAY, this);
         timer.start();
@@ -56,107 +48,110 @@ public class Game extends JPanel implements ActionListener {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        // Draw each item on the map
-        for (Object item : this.items) { item.draw(g); }
+        for (Object item : this.items) {
+
+            item.draw(g);
+        }
+
+        for (Platform platform : this.platforms) {
+
+            platform.draw(g);
+        }
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
 
-        // Clear list of items to be removed
-        this.removedItems.clear();
+        this.collisionList.clear();
 
-        // Record items that no longer exist
-        for (Object item : this.items) { if (!item.getExists()) { this.removedItems.add(item); } }
+        for (Object item : this.items) {
 
-        // Remove items that no longer exist
-        for (Object item : this.removedItems) { this.items.remove(item); }
+            if (!item.getExists()) {
 
-        // Update each item on the map
-        for (Object item : this.items) { item.update(); }
+                this.collisionList.add(item);
+            }
+        }
 
-        // Clear list of collisions for each item
-        for (Object item : this.items) { item.clearCollision(); }
+        for (Object item : this.collisionList) {
 
-        // Check for collisions
-        quadTree(0, 0, this.width, this.height, this.items);
+            this.items.remove(item);
+        }
+
+        for (Object item1 : this.items) {
+
+            for (Object item2 : this.items) {
+
+                if (itemCollision(item1, item2)) {
+
+                    item1.addCollision(item2);
+                }
+            }
+        }
+
+        for (Object item : this.items) {
+
+            for (Platform platform : this.platforms) {
+
+                if (platformCollision(item, platform)) {
+
+                    item.setPlatform(platform);
+                }
+            }
+        }
+
+        for (Object item : this.items) {
+
+            item.update();
+        }
+
+        for (Object item : this.items) {
+
+            item.clearCollisions();
+        }
 
         repaint();
     }
 
-    private void quadTree(int x1, int y1, int x3, int y3, ArrayList<Object> objects) {
+    private boolean itemCollision(Object object1, Object object2) {
 
-        if (4 <= objects.size() && 12 <= x3 - x1) {
+        return
+            object2.getX() + object2.getWidth() + object2.getXSpeed() > object1.getX() + object1.getXSpeed() &&
+            object2.getY() + object2.getHeight() + object2.getYSpeed() > object1.getY() + object1.getYSpeed() &&
+            object1.getX() + object1.getWidth() + object1.getXSpeed() > object2.getX() + object2.getXSpeed()&&
+            object1.getY() + object1.getHeight() + object1.getYSpeed() > object2.getY() + object2.getYSpeed();
+    }
 
-            ArrayList<Object> q1 = new ArrayList<>();
-            ArrayList<Object> q2 = new ArrayList<>();
-            ArrayList<Object> q3 = new ArrayList<>();
-            ArrayList<Object> q4 = new ArrayList<>();
+    private boolean platformCollision(Object object, Platform platform) {
 
-            int x2 = ((x3 - x1) / 2) + x1;
-            int y2 = ((y3 - y1) / 2) + y1;
-
-            for (Object item : objects) {
-
-                if ((x2 > item.getX() + item.getXSpeed()) &&
-                    (y2 > item.getY() + item.getYSpeed()) &&
-                    (item.getX() + item.getWidth() + item.getXSpeed() > x1) &&
-                    (item.getY() + item.getHeight() + item.getYSpeed() > y1)) {
-
-                    q1.add(item);
-                }
-
-                if ((x3 > item.getX() + item.getXSpeed()) &&
-                    (y2 > item.getY() + item.getYSpeed()) &&
-                    (item.getX() + item.getWidth() + item.getXSpeed()> x2) &&
-                    (item.getY() + item.getHeight() + item.getYSpeed() > y1)) {
-
-                    q2.add(item);
-                }
-
-                if ((x2 > item.getX() + item.getXSpeed()) &&
-                    (y3 > item.getY() + item.getYSpeed()) &&
-                    (item.getX() + item.getWidth() + item.getXSpeed()> x1) &&
-                    (item.getY() + item.getHeight() + item.getYSpeed() > y2)) {
-
-                    q3.add(item);
-                }
-
-                if ((x3 > item.getX() + item.getXSpeed()) &&
-                    (y3 > item.getY() + item.getYSpeed()) &&
-                    (item.getX() + item.getWidth() + item.getXSpeed()> x2) &&
-                    (item.getY() + item.getHeight() + item.getYSpeed() > y2)) {
-
-                    q4.add(item);
-                }
-            }
-
-            quadTree(x1, y1, x2, y2, q1);
-            quadTree(x2, y1, x3, y2, q2);
-            quadTree(x1, y2, x2, y3, q3);
-            quadTree(x2, y2, x3, y3, q4);
+        if (object.getYSpeed() < 0) {
+            return false;
         }
-        else
-        {
 
-            for (int i = 0; i < objects.size(); i++) {
+        float x = object.getX() + (object.getWidth() / 2);
+        float y = object.getY() + object.getHeight();
 
-                Object first = objects.get(i);
-                for (int j = i + 1; j < objects.size(); j++) {
+        float x1 = platform.getX1();
+        float y1 = platform.getY1();
 
-                    Object second = objects.get(j);
+        float x2 = platform.getX2();
+        float y2 = platform.getY2();
 
-                    if ((second.getX() + second.getWidth() + second.getXSpeed() > first.getX() + first.getXSpeed()) &&
-                        (second.getY() + second.getHeight() + second.getYSpeed() > first.getY() + first.getYSpeed()) &&
-                        (first.getX() + first.getWidth() + first.getXSpeed() > second.getX() + second.getXSpeed()) &&
-                        (first.getY() + first.getHeight() + first.getYSpeed() > second.getY() + second.getYSpeed())) {
+        if (!((x1 <= x && x <= x2) && (y1 <= y && y <= y2))) {
 
-                        first.addCollision(second);
-                        second.addCollision(first);
-                    }
-                }
-            }
+            return false;
         }
+
+        float A = x - x1;   // position of point rel one end of line
+        float B = y - y1;
+        float C = x2 - x1;  // vector along line
+        float D = y2 - y1;
+
+        float dot = A * -D + B * C;
+        float len_sq = -D * -D + C * C;
+
+        float distance = (float) (Math.abs(dot) / Math.sqrt(len_sq));
+
+        return distance <= Math.sqrt((object.getXSpeed() * object.getXSpeed()) + (object.getYSpeed() * object.getYSpeed())) + 1;
     }
 
 }
