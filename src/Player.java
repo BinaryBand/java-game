@@ -28,7 +28,7 @@ class Player extends Object {
 
                 this.points += 1;
 
-                if (this.points % 50 == 0) {
+                if (this.points % 500 == 0) {
 
                     this.setX(this.getX() - 1);
                     this.setY(this.getY() - 1);

@@ -25,7 +25,7 @@ public class Game extends JPanel implements ActionListener {
 
         // Create a bunch of random objects
         Random rand = new Random();
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < 10000; i++) {
 
             this.items.add(new Particle(Math.abs(rand.nextInt() % 720), Math.abs(rand.nextInt() % 480), 10, 10, rand));
         }
@@ -98,34 +98,34 @@ public class Game extends JPanel implements ActionListener {
 
             for (Object item : objects) {
 
-                if ((x2 > item.getX()) &&
-                    (y2 > item.getY()) &&
-                    (item.getX() + item.getWidth() > x1) &&
-                    (item.getY() + item.getHeight() > y1)) {
+                if ((x2 > item.getX() + item.getXSpeed()) &&
+                    (y2 > item.getY() + item.getYSpeed()) &&
+                    (item.getX() + item.getWidth() + item.getXSpeed() > x1) &&
+                    (item.getY() + item.getHeight() + item.getYSpeed() > y1)) {
 
                     q1.add(item);
                 }
 
-                if ((x3 > item.getX()) &&
-                    (y2 > item.getY()) &&
-                    (item.getX() + item.getWidth() > x2) &&
-                    (item.getY() + item.getHeight() > y1)) {
+                if ((x3 > item.getX() + item.getXSpeed()) &&
+                    (y2 > item.getY() + item.getYSpeed()) &&
+                    (item.getX() + item.getWidth() + item.getXSpeed()> x2) &&
+                    (item.getY() + item.getHeight() + item.getYSpeed() > y1)) {
 
                     q2.add(item);
                 }
 
-                if ((x2 > item.getX()) &&
-                    (y3 > item.getY()) &&
-                    (item.getX() + item.getWidth() > x1) &&
-                    (item.getY() + item.getHeight() > y2)) {
+                if ((x2 > item.getX() + item.getXSpeed()) &&
+                    (y3 > item.getY() + item.getYSpeed()) &&
+                    (item.getX() + item.getWidth() + item.getXSpeed()> x1) &&
+                    (item.getY() + item.getHeight() + item.getYSpeed() > y2)) {
 
                     q3.add(item);
                 }
 
-                if ((x3 > item.getX()) &&
-                    (y3 > item.getY()) &&
-                    (item.getX() + item.getWidth() > x2) &&
-                    (item.getY() + item.getHeight() > y2)) {
+                if ((x3 > item.getX() + item.getXSpeed()) &&
+                    (y3 > item.getY() + item.getYSpeed()) &&
+                    (item.getX() + item.getWidth() + item.getXSpeed()> x2) &&
+                    (item.getY() + item.getHeight() + item.getYSpeed() > y2)) {
 
                     q4.add(item);
                 }
@@ -146,10 +146,10 @@ public class Game extends JPanel implements ActionListener {
 
                     Object second = objects.get(j);
 
-                    if ((second.getX() + second.getWidth() > first.getX()) &&
-                        (second.getY() + second.getHeight() > first.getY()) &&
-                        (first.getX() + first.getWidth() > second.getX()) &&
-                        (first.getY() + first.getHeight() > second.getY())) {
+                    if ((second.getX() + second.getWidth() + second.getXSpeed() > first.getX() + first.getXSpeed()) &&
+                        (second.getY() + second.getHeight() + second.getYSpeed() > first.getY() + first.getYSpeed()) &&
+                        (first.getX() + first.getWidth() + first.getXSpeed() > second.getX() + second.getXSpeed()) &&
+                        (first.getY() + first.getHeight() + first.getYSpeed() > second.getY() + second.getYSpeed())) {
 
                         first.addCollision(second);
                         second.addCollision(first);
