@@ -3,7 +3,12 @@ import javax.swing.JFrame;
 
 public class Application extends JFrame {
 
+    private int width, height;
+
     private Application() {
+
+        this.width = 720;
+        this.height = 480;
 
         initUI();
     }
@@ -11,13 +16,13 @@ public class Application extends JFrame {
     private void initUI() {
 
         // Here we put the Board to the center of the JFrame container.
-        add(new Game());
+        add(new Game(this.width, this.height));
 
         // The setResizable() sets whether the frame can be resized.
         setResizable(false);
 
         // This line sets the size of the window.
-        setSize(720, 480);
+        setSize(this.width, this.height);
 
         // Set window title.
         setTitle("Game Engine");

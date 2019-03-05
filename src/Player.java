@@ -1,89 +1,62 @@
-import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
 
-class Player implements Object {
+class Player extends Object {
 
     private Controls keys;
-    private boolean exists;
-    private Image spriteSheet;
-    private float x, y, height, width, xSpeed, ySpeed;
-    private ArrayList<Object> collisions = new ArrayList<>();
+    private int points;
 
-    Player(float x, float y, float height, float width, Controls keys) {
+    Player(float x, float y, int width, int height, Controls keys) {
+        super(x, y, width, height);
+
+        this.setX(x);
+        this.setY(y);
+
+        this.setWidth(width);
+        this.setHeight(height);
+
+        this.points = 0;
 
         this.keys = keys;
-
-        ImageIcon rawImage = new ImageIcon("src/res/mario.png");
-        this.spriteSheet = rawImage.getImage();
-
-        this.x = x;
-        this.y = y;
-
-        this.height = height;
-        this.width = width;
-
-        this.xSpeed = 0;
-        this.ySpeed = 0;
-
-        this.exists = true;
     }
 
     @Override
-    public float getX() { return this.x; }
+    void update() {
 
-    @Override
-    public float getY() { return this.y; }
+        for (Object item : this.getCollisions()) {
 
-    @Override
-    public float getHeight() { return this.height; }
+            if (item instanceof Particle) {
 
-    @Override
-    public float getWidth() { return this.width; }
+                this.points += 1;
 
-    @Override
-    public float getXSpeed() { return this.xSpeed; }
+                if (this.points % 50 == 0) {
 
-    @Override
-    public float getYSpeed() { return this.ySpeed; }
+                    this.setX(this.getX() - 1);
+                    this.setY(this.getY() - 1);
 
-    @Override
-    public boolean getExists() { return this.exists; }
-
-    @Override
-    public void addCollision(Object object) { this.collisions.add(object); }
-
-    @Override
-    public void clearCollisions() { this.collisions.clear(); }
-
-    public void update() {
-
-        for (Object obj : this.collisions) {
-
-            if (obj instanceof Enemy) {
-
-                this.xSpeed = -10;
+                    this.setWidth(this.getWidth() + 2);
+                    this.setHeight(this.getHeight() + 2);
+                }
             }
         }
 
-        if (this.keys.getLeft()) this.xSpeed -= 1;
-        if (this.keys.getRight()) this.xSpeed += 1;
+        if (this.keys.getRight()) { this.setX(this.getX() + 2); }
+        if (this.keys.getLeft()) { this.setX(this.getX() - 2); }
+        if (this.keys.getUp()) { this.setY(this.getY() - 2); }
+        if (this.keys.getDown()) { this.setY(this.getY() + 2); }
 
-        if (this.keys.getUp()) this.ySpeed -= 1;
-        if (this.keys.getDown()) this.ySpeed += 1;
-
-        this.x += this.xSpeed;
-        this.y += this.ySpeed;
+        this.setX(this.getX() + this.getXSpeed());
+        this.setY(this.getY() + this.getYSpeed());
     }
 
-    public void draw(Graphics g) {
+    @Override
+    void draw(Graphics g) {
 
-        g.drawImage(this.spriteSheet,
-                Math.round(this.x),
-                Math.round(this.y),
-                Math.round(this.width),
-                Math.round(this.height),
-                null);
+        g.setColor(Color.blue);
+
+        g.fillOval(Math.round(this.getX()),
+                Math.round(this.getY()),
+                this.getWidth(),
+                this.getHeight());
     }
 
 }
