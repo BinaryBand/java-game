@@ -3,7 +3,7 @@ import java.util.Random;
 
 class Particle extends Object {
 
-    Particle(float x, float y, int width, int height, Random rand) {
+    Particle(double x, double y, int width, int height, Random rand) {
         super(x, y, width, height);
 
         this.setX(x);
@@ -12,8 +12,7 @@ class Particle extends Object {
         this.setWidth(width);
         this.setHeight(height);
 
-        this.setXSpeed(rand.nextInt() % 2);
-        this.setYSpeed(rand.nextInt() % 2);
+        this.setXSpeed((rand.nextDouble() * 6) - 3);
     }
 
     @Override
@@ -21,7 +20,18 @@ class Particle extends Object {
 
         for (Object item : this.getCollisions()) {
 
-            if (item instanceof Player) {
+            if (item instanceof Particle) {
+
+                double deltaX = (this.getX() + (this.getWidth() / 2)) - (item.getX() + (item.getWidth() / 2));
+                double deltaY = (this.getY() + (this.getHeight() / 2)) - (item.getY() + (item.getHeight() / 2));
+                double angle = Math.atan2(deltaY, deltaX);
+
+                double speed = Math.sqrt(Math.pow(getXSpeed(), 2) + Math.pow(getYSpeed(), 2));
+
+                this.setXSpeed( (speed * Math.cos(angle)) - (item.getXSpeed() / 2));
+                this.setYSpeed( (speed * Math.sin(angle)) - (item.getYSpeed() / 2));
+            }
+            else if (item instanceof Player) {
 
                 this.kill();
             }
@@ -48,8 +58,8 @@ class Particle extends Object {
 
         g.setColor(Color.red);
 
-        g.fillOval(Math.round(this.getX()),
-                Math.round(this.getY()),
+        g.fillOval((int)this.getX(),
+                (int)this.getY(),
                 this.getWidth(),
                 this.getHeight());
     }
