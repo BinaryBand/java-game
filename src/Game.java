@@ -21,7 +21,7 @@ public class Game extends JPanel implements ActionListener {
     private void createGame() {
 
         // Create player object
-        // this.items.add(new Player(100, 100, 50, 50, setControls()));
+        this.items.add(new Player(100, 100, 50, 50, setControls()));
 
         // Create a bunch of random objects
         Random rand = new Random();
