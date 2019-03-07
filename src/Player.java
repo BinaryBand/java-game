@@ -4,8 +4,8 @@ class Player extends Object {
 
     private Controls keys;
 
-    Player(float x, float y, int width, int height, Controls keys) {
-        super(x, y, width, height);
+    Player(float x, float y, int width, int height, Camera cam, Controls keys) {
+        super(x, y, width, height, cam);
 
         this.setX(x);
         this.setY(y);
@@ -21,15 +21,6 @@ class Player extends Object {
 
     @Override
     void update() {
-
-        for (Object item : this.getCollisions()) {
-
-            if (item instanceof Particle) {
-
-                this.setWidth(this.getWidth() + 1);
-                this.setHeight(this.getHeight() + 1);
-            }
-        }
 
         if (this.keys.getRight()) {
             this.setXSpeed(this.getXSpeed() + 0.1);
@@ -53,10 +44,18 @@ class Player extends Object {
 
         g.setColor(Color.blue);
 
-        g.fillOval((int)this.getX(),
-                (int)this.getY(),
+        Graphics2D g2d = (Graphics2D)g.create();
+        RenderingHints hints = new RenderingHints(
+                RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON
+        );
+        g2d.setRenderingHints(hints);
+
+        g2d.fillOval((int) (this.getX() - this.getCam().getX()),
+                (int) (this.getY() - this.getCam().getY()),
                 this.getWidth(),
                 this.getHeight());
+
+        g2d.dispose();
     }
 
 }
