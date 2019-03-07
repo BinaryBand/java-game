@@ -3,8 +3,8 @@ import java.util.Random;
 
 class Particle extends Object {
 
-    Particle(double x, double y, int width, int height, Random rand) {
-        super(x, y, width, height);
+    Particle(double x, double y, int width, int height, Camera cam) {
+        super(x, y, width, height, cam);
 
         this.setX(x);
         this.setY(y);
@@ -12,7 +12,9 @@ class Particle extends Object {
         this.setWidth(width);
         this.setHeight(height);
 
+        Random rand = new Random();
         this.setXSpeed((rand.nextDouble() * 6) - 3);
+        this.setYSpeed((rand.nextDouble() * 6) - 3);
     }
 
     @Override
@@ -28,8 +30,8 @@ class Particle extends Object {
 
                 double speed = Math.sqrt(Math.pow(getXSpeed(), 2) + Math.pow(getYSpeed(), 2));
 
-                this.setXSpeed( (speed * Math.cos(angle)) - (item.getXSpeed() / 2));
-                this.setYSpeed( (speed * Math.sin(angle)) - (item.getYSpeed() / 2));
+                this.setXSpeed(speed * Math.cos(angle));
+                this.setYSpeed(speed * Math.sin(angle));
             }
             else if (item instanceof Player) {
 
@@ -39,29 +41,33 @@ class Particle extends Object {
 
         this.setX(this.getX() + this.getXSpeed());
         this.setY(this.getY() + this.getYSpeed());
-
-        if (this.getX() + this.getWidth() <= 0) {
-            this.setX(720);
-        } else if (720 <= this.getX()) {
-            this.setX(0 - this.getWidth());
-        }
-
-        if (this.getY() + this.getHeight() <= 0) {
-            this.setY(480);
-        } else if (480 <= this.getY()) {
-            this.setY(0 - this.getHeight());
-        }
     }
 
     @Override
     void draw(Graphics g) {
 
+        int tempX = (int) (this.getX() - this.getCam().getX());
+        int tempY = (int) (this.getY() - this.getCam().getY());
+
         g.setColor(Color.red);
 
-        g.fillOval((int)this.getX(),
-                (int)this.getY(),
+        g.fillOval(tempX,
+                tempY,
                 this.getWidth(),
                 this.getHeight());
+
+        Graphics2D g2d = (Graphics2D)g.create();
+        RenderingHints hints = new RenderingHints(
+                RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON
+        );
+        g2d.setRenderingHints(hints);
+
+        g2d.fillOval((int) (this.getX() - this.getCam().getX()),
+                (int) (this.getY() - this.getCam().getY()),
+                this.getWidth(),
+                this.getHeight());
+
+        g2d.dispose();
     }
 
 }

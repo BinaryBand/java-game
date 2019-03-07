@@ -4,8 +4,8 @@ class Player extends Object {
 
     private Controls keys;
 
-    Player(float x, float y, int width, int height, Controls keys) {
-        super(x, y, width, height);
+    Player(float x, float y, int width, int height, Camera cam, Controls keys) {
+        super(x, y, width, height, cam);
 
         this.setX(x);
         this.setY(y);
@@ -22,19 +22,6 @@ class Player extends Object {
     @Override
     void update() {
 
-        for (Object item : this.getCollisions()) {
-
-            if (item instanceof Particle) {
-
-                this.setX(this.getX() - 1);
-                this.setY(this.getY() - 1);
-
-
-                this.setWidth(this.getWidth() + 2);
-                this.setHeight(this.getHeight() + 2);
-            }
-        }
-
         if (this.keys.getRight()) {
             this.setXSpeed(this.getXSpeed() + 0.1);
         }
@@ -50,18 +37,6 @@ class Player extends Object {
 
         this.setX(this.getX() + this.getXSpeed());
         this.setY(this.getY() + this.getYSpeed());
-
-        if (this.getX() + this.getWidth() <= 0) {
-            this.setX(720);
-        } else if (720 <= this.getX()) {
-            this.setX(0 - this.getWidth());
-        }
-
-        if (this.getY() + this.getHeight() <= 0) {
-            this.setY(480);
-        } else if (480 <= this.getY()) {
-            this.setY(0 - this.getHeight());
-        }
     }
 
     @Override
@@ -69,10 +44,18 @@ class Player extends Object {
 
         g.setColor(Color.blue);
 
-        g.fillOval((int)this.getX(),
-                (int)this.getY(),
+        Graphics2D g2d = (Graphics2D)g.create();
+        RenderingHints hints = new RenderingHints(
+                RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON
+        );
+        g2d.setRenderingHints(hints);
+
+        g2d.fillOval((int) (this.getX() - this.getCam().getX()),
+                (int) (this.getY() - this.getCam().getY()),
                 this.getWidth(),
                 this.getHeight());
+
+        g2d.dispose();
     }
 
 }

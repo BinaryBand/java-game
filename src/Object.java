@@ -4,11 +4,12 @@ import java.util.ArrayList;
 abstract class Object {
 
     private ArrayList<Object> collisions = new ArrayList<>();
-    private double x, y, xSpeed, ySpeed;
     private int width, height;
+    private double x, y, xSpeed, ySpeed;
     private boolean exists;
+    private Camera cam;
 
-    Object(double x, double y, int width, int height) {
+    Object(double x, double y, int width, int height, Camera cam) {
 
         this.x = x;
         this.y = y;
@@ -18,6 +19,8 @@ abstract class Object {
 
         this.xSpeed = 0;
         this.ySpeed = 0;
+
+        this.cam = cam;
 
         this.exists = true;
     }
@@ -40,6 +43,8 @@ abstract class Object {
     void setXSpeed(double xSpeed) { this.xSpeed = xSpeed; }
     void setYSpeed(double ySpeed) { this.ySpeed = ySpeed; }
 
+    Camera getCam() { return this.cam; }
+
     void kill() { this.exists = false; }
     boolean getExists() { return this.exists; }
 
@@ -49,5 +54,4 @@ abstract class Object {
 
     abstract void update();
     abstract void draw(Graphics g);
-
 }

@@ -6,9 +6,9 @@ import java.util.Random;
 
 public class Game extends JPanel implements ActionListener {
 
+    private Camera cam;
     private int width, height;
     private ArrayList<Object> items = new ArrayList<>();
-    private ArrayList<Object> removedItems = new ArrayList<>();
 
     Game(int width, int height) {
 
@@ -20,21 +20,28 @@ public class Game extends JPanel implements ActionListener {
 
     private void createGame() {
 
-        // Create player object
-        this.items.add(new Player(100, 100, 50, 50, setControls()));
+        // Create a camera
+        this.cam = new Camera(width, height);
+
+        // Create a player object
+        Player player = new Player(100, 100, 50, 50, this.cam, setControls());
+
+        // Add player to objects list and set it as the subject for the camera
+        this.items.add(player);
+        cam.setSubject(player);
 
         // Create a bunch of random objects
         Random rand = new Random();
-        for (int i = 0; i < 50; i++) {
+        for (int i = 0; i < 1000; i++) {
 
-            this.items.add(new Particle(Math.abs(rand.nextInt() % 720), Math.abs(rand.nextInt() % 480), 10, 10, rand));
+            this.items.add(new Particle(rand.nextInt() % 720, rand.nextInt() % 480, 10, 10, cam));
         }
 
         // Set background color
         setBackground(Color.WHITE);
 
         // Frame rate
-        int fps = 120;
+        int fps = 60;
         int DELAY = 1000 / fps;
 
         Timer timer = new Timer(DELAY, this);
@@ -59,21 +66,20 @@ public class Game extends JPanel implements ActionListener {
         // Draw each item on the map
         for (Object item : this.items) { item.draw(g); }
 
-        // Check for collisions
-        quadTree(0, 0, this.width, this.height, this.items, g);
+        handleCollisions(g);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
 
         // Clear list of items to be removed
-        this.removedItems.clear();
+        ArrayList<Object> removedItems = new ArrayList<>();
 
         // Record items that no longer exist
-        for (Object item : this.items) { if (!item.getExists()) { this.removedItems.add(item); } }
+        for (Object item : this.items) { if (!item.getExists()) { removedItems.add(item); } }
 
         // Remove items that no longer exist
-        for (Object item : this.removedItems) { this.items.remove(item); }
+        for (Object item : removedItems) { this.items.remove(item); }
 
         // Update each item on the map
         for (Object item : this.items) { item.update(); }
@@ -81,16 +87,60 @@ public class Game extends JPanel implements ActionListener {
         // Clear list of collisions for each item
         for (Object item : this.items) { item.clearCollision(); }
 
+        this.cam.update();
+
         repaint();
+    }
+
+    private void handleCollisions(Graphics g) {
+
+        int x1 = 0;
+        for (Object item : this.items) {
+
+            if (item.getX() < x1) {
+
+                x1 = (int) (item.getX());
+            }
+        }
+
+        int y1 = 0;
+        for (Object item : this.items) {
+
+            if (item.getY() < y1) {
+
+                y1 = (int) (item.getY());
+            }
+        }
+
+        int x2 = 0;
+        for (Object item : this.items) {
+
+            if (item.getX() + item.getWidth() > x2) {
+
+                x2 = (int) (item.getX() + item.getWidth());
+            }
+        }
+
+        int y2 = 0;
+        for (Object item : this.items) {
+
+            if (item.getY() + item.getHeight() > y2) {
+
+                y2 = (int) (item.getY() + item.getHeight());
+            }
+        }
+
+        // Check for collisions
+        quadTree(x1, y1, x2, y2, this.items, g);
     }
 
     private void quadTree(int x1, int y1, int x3, int y3, ArrayList<Object> objects, Graphics g) {
 
         g.setColor(Color.gray);
 
-        g.drawRect(x1, y1, x3 - x1, y3 - y1);
+        g.drawRect((int) (x1 - this.cam.getX()), (int) (y1 - this.cam.getY()), x3 - x1, y3 - y1);
 
-        if (4 <= objects.size() && 12 <= x3 - x1) {
+        if (4 <= objects.size() && 8 <= x3 - x1) {
 
             ArrayList<Object> q1 = new ArrayList<>();
             ArrayList<Object> q2 = new ArrayList<>();
