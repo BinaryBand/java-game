@@ -25,7 +25,7 @@ public class Game extends JPanel implements ActionListener {
 
         // Create a bunch of random objects
         Random rand = new Random();
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 50; i++) {
 
             this.items.add(new Particle(Math.abs(rand.nextInt() % 720), Math.abs(rand.nextInt() % 480), 10, 10, rand));
         }
@@ -34,7 +34,7 @@ public class Game extends JPanel implements ActionListener {
         setBackground(Color.WHITE);
 
         // Frame rate
-        int fps = 60;
+        int fps = 120;
         int DELAY = 1000 / fps;
 
         Timer timer = new Timer(DELAY, this);

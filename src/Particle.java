@@ -22,8 +22,8 @@ class Particle extends Object {
 
             if (item instanceof Particle) {
 
-                double deltaX = (this.getX() + (this.getWidth() / 2)) - (item.getX() + (item.getWidth() / 2));
-                double deltaY = (this.getY() + (this.getHeight() / 2)) - (item.getY() + (item.getHeight() / 2));
+                double deltaX = (this.getX() + (this.getWidth() / 2.0)) - (item.getX() + (item.getWidth() / 2.0));
+                double deltaY = (this.getY() + (this.getHeight() / 2.0)) - (item.getY() + (item.getHeight() / 2.0));
                 double angle = Math.atan2(deltaY, deltaX);
 
                 double speed = Math.sqrt(Math.pow(getXSpeed(), 2) + Math.pow(getYSpeed(), 2));
