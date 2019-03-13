@@ -2,7 +2,7 @@ import java.awt.*;
 
 class Block extends Object {
 
-    Block(double x, double y, int width, int height, Camera cam) {
+    Block(int x, int y, int width, int height, Camera cam) {
         super(x, y, width, height, cam);
     }
 
@@ -12,10 +12,7 @@ class Block extends Object {
     }
 
     @Override
-    void draw(Graphics g) {
-
-        int tempX = (int) (getX() - getCam().getX());
-        int tempY = (int) (getY() - getCam().getY());
+    void draw(int tempX, int tempY, Graphics g) {
 
         g.setColor(Color.black);
         g.fillRect(tempX,

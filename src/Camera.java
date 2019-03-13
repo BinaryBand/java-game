@@ -13,8 +13,8 @@ class Camera {
 
         if (subject != null) {
 
-            x = (int) (subject.getX() + (subject.getWidth() / 2.0) - (width / 2.0));
-            y = (int) (subject.getY() + (subject.getHeight() / 2.0) - (height / 2.0));
+            x = subject.getX() + (subject.getWidth() / 2) - (width / 2);
+            y = subject.getY() + (subject.getHeight() / 2) - (height / 2);
         }
         else {
 

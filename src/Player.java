@@ -4,7 +4,7 @@ class Player extends Object {
 
     private Controls keys;
 
-    Player(float x, float y, int width, int height, Camera cam, Controls keys) {
+    Player(int x, int y, int width, int height, Camera cam, Controls keys) {
         super(x, y, width, height, cam);
 
         this.keys = keys;
@@ -33,7 +33,6 @@ class Player extends Object {
 
                     setYSpeed(0);
                     setY(item.getY() - getHeight() + 1);
-                    setYSpeed(0);
 
                     if (keys.getUp()) {
 
@@ -43,17 +42,14 @@ class Player extends Object {
             }
         }
 
-        setX(getX() + getXSpeed());
-        setY(getY() + getYSpeed());
+        setX((int) (getX() + getXSpeed()));
+        setY((int) (getY() + getYSpeed()));
     }
 
     @Override
-    void draw(Graphics g) {
+    void draw(int tempX, int tempY, Graphics g) {
 
         g.setColor(Color.blue);
-
-        int tempX = (int) (getX() - getCam().getX());
-        int tempY = (int) (getY() - getCam().getY());
 
         g.fillRect(tempX,
                 tempY,

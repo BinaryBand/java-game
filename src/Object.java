@@ -4,12 +4,12 @@ import java.util.ArrayList;
 abstract class Object {
 
     private ArrayList<Object> collisions = new ArrayList<>();
-    private int width, height;
-    private double x, y, xSpeed, ySpeed;
+    private int x, y, width, height;
+    private double xSpeed, ySpeed;
     private boolean exists;
     private Camera cam;
 
-    Object(double x, double y, int width, int height, Camera cam) {
+    Object(int x, int y, int width, int height, Camera cam) {
 
         this.x = x;
         this.y = y;
@@ -25,11 +25,11 @@ abstract class Object {
         this.exists = true;
     }
 
-    double getX() { return x; }
-    double getY() { return y; }
+    int getX() { return x; }
+    int getY() { return y; }
 
-    void setX(double x) { this.x = x; }
-    void setY(double y) { this.y = y; }
+    void setX(int x) { this.x = x; }
+    void setY(int y) { this.y = y; }
 
     int getWidth() { return width; }
     int getHeight() { return height; }
@@ -53,18 +53,18 @@ abstract class Object {
     void clearCollision() { this.collisions.clear(); }
 
     abstract void update();
-    abstract void draw(Graphics g);
+    abstract void draw(int tempX, int tempY, Graphics g);
 
     void preDraw(Graphics g) {
 
-        int tempX = (int) (x - cam.getX());
-        int tempY = (int) (y - cam.getY());
+        int tempX = (x - cam.getX());
+        int tempY = (y - cam.getY());
 
         if (tempX + width > 0 && tempX < cam.getWidth()) {
 
             if (tempY + height > 0 && tempY < cam.getHeight()) {
 
-                draw(g);
+                draw(tempX, tempY, g);
             }
         }
     }
