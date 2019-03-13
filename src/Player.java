@@ -7,36 +7,41 @@ class Player extends Object {
     Player(float x, float y, int width, int height, Camera cam, Controls keys) {
         super(x, y, width, height, cam);
 
-        this.setX(x);
-        this.setY(y);
-
-        this.setWidth(width);
-        this.setHeight(height);
-
-        this.setXSpeed(0);
-        this.setYSpeed(0);
-
         this.keys = keys;
     }
 
     @Override
     void update() {
 
-        if (this.keys.getRight()) {
-            this.setXSpeed(this.getXSpeed() + 0.1);
-        }
-        if (this.keys.getLeft()) {
-            this.setXSpeed(this.getXSpeed() - 0.1);
-        }
-        if (this.keys.getUp()) {
-            this.setYSpeed(this.getYSpeed() - 0.1);
-        }
-        if (this.keys.getDown()) {
-            this.setYSpeed(this.getYSpeed() + 0.1);
+        if (keys.getLeft()) {
+
+            setX(getX() - 1);
         }
 
-        this.setX(this.getX() + this.getXSpeed());
-        this.setY(this.getY() + this.getYSpeed());
+        if (keys.getRight()) {
+
+            setX(getX() + 1);
+        }
+
+        setYSpeed(getYSpeed() + 0.25);
+
+        for (Object item : this.getCollisions()) {
+
+            if (item instanceof Block) {
+
+                setYSpeed(0);
+                setY(item.getY() - getHeight() + 1);
+                setYSpeed(0);
+
+                if (keys.getUp()) {
+
+                    setYSpeed(-5);
+                }
+            }
+        }
+
+        setX(getX() + getXSpeed());
+        setY(getY() + getYSpeed());
     }
 
     @Override
@@ -44,18 +49,13 @@ class Player extends Object {
 
         g.setColor(Color.blue);
 
-        Graphics2D g2d = (Graphics2D)g.create();
-        RenderingHints hints = new RenderingHints(
-                RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON
-        );
-        g2d.setRenderingHints(hints);
+        int tempX = (int) (getX() - getCam().getX());
+        int tempY = (int) (getY() - getCam().getY());
 
-        g2d.fillOval((int) (this.getX() - this.getCam().getX()),
-                (int) (this.getY() - this.getCam().getY()),
-                this.getWidth(),
-                this.getHeight());
-
-        g2d.dispose();
+        g.fillRect(tempX,
+                tempY,
+                getWidth(),
+                getHeight());
     }
 
 }

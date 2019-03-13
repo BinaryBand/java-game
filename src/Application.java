@@ -7,8 +7,8 @@ public class Application extends JFrame {
 
     private Application() {
 
-        this.width = 720;
-        this.height = 480;
+        this.width = 1000;
+        this.height = 500;
 
         initUI();
     }

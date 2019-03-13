@@ -1,8 +1,8 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Random;
 
 public class Game extends JPanel implements ActionListener {
 
@@ -21,21 +21,17 @@ public class Game extends JPanel implements ActionListener {
     private void createGame() {
 
         // Create a camera
-        this.cam = new Camera(width, height);
+        cam = new Camera(width, height);
 
         // Create a player object
-        Player player = new Player(100, 100, 50, 50, this.cam, setControls());
+        Player player = new Player(0, 0, 50, 50, cam, setControls());
 
         // Add player to objects list and set it as the subject for the camera
-        this.items.add(player);
+        items.add(player);
         cam.setSubject(player);
 
         // Create a bunch of random objects
-        Random rand = new Random();
-        for (int i = 0; i < 1000; i++) {
-
-            this.items.add(new Particle(rand.nextInt() % 720, rand.nextInt() % 480, 10, 10, cam));
-        }
+        items.add(new Block(-50, 100, 100, 100, cam));
 
         // Set background color
         setBackground(Color.WHITE);
@@ -64,9 +60,7 @@ public class Game extends JPanel implements ActionListener {
         super.paintComponent(g);
 
         // Draw each item on the map
-        for (Object item : this.items) { item.draw(g); }
-
-        handleCollisions(g);
+        for (Object item : items) { item.preDraw(g); }
     }
 
     @Override
@@ -76,26 +70,28 @@ public class Game extends JPanel implements ActionListener {
         ArrayList<Object> removedItems = new ArrayList<>();
 
         // Record items that no longer exist
-        for (Object item : this.items) { if (!item.getExists()) { removedItems.add(item); } }
+        for (Object item : items) { if (!item.getExists()) { removedItems.add(item); } }
 
         // Remove items that no longer exist
-        for (Object item : removedItems) { this.items.remove(item); }
-
-        // Update each item on the map
-        for (Object item : this.items) { item.update(); }
+        for (Object item : removedItems) { items.remove(item); }
 
         // Clear list of collisions for each item
-        for (Object item : this.items) { item.clearCollision(); }
+        for (Object item : items) { item.clearCollision(); }
 
-        this.cam.update();
+        handleCollisions();
+
+        // Update each item on the map
+        for (Object item : items) { item.update(); }
+
+        cam.update();
 
         repaint();
     }
 
-    private void handleCollisions(Graphics g) {
+    private void handleCollisions() {
 
         int x1 = 0;
-        for (Object item : this.items) {
+        for (Object item : items) {
 
             if (item.getX() < x1) {
 
@@ -104,7 +100,7 @@ public class Game extends JPanel implements ActionListener {
         }
 
         int y1 = 0;
-        for (Object item : this.items) {
+        for (Object item : items) {
 
             if (item.getY() < y1) {
 
@@ -113,7 +109,7 @@ public class Game extends JPanel implements ActionListener {
         }
 
         int x2 = 0;
-        for (Object item : this.items) {
+        for (Object item : items) {
 
             if (item.getX() + item.getWidth() > x2) {
 
@@ -122,7 +118,7 @@ public class Game extends JPanel implements ActionListener {
         }
 
         int y2 = 0;
-        for (Object item : this.items) {
+        for (Object item : items) {
 
             if (item.getY() + item.getHeight() > y2) {
 
@@ -131,14 +127,10 @@ public class Game extends JPanel implements ActionListener {
         }
 
         // Check for collisions
-        quadTree(x1, y1, x2, y2, this.items, g);
+        quadTree(x1, y1, x2, y2, items);
     }
 
-    private void quadTree(int x1, int y1, int x3, int y3, ArrayList<Object> objects, Graphics g) {
-
-        g.setColor(Color.gray);
-
-        g.drawRect((int) (x1 - this.cam.getX()), (int) (y1 - this.cam.getY()), x3 - x1, y3 - y1);
+    private void quadTree(int x1, int y1, int x3, int y3, ArrayList<Object> objects) {
 
         if (4 <= objects.size() && 8 <= x3 - x1) {
 
@@ -185,13 +177,12 @@ public class Game extends JPanel implements ActionListener {
                 }
             }
 
-            quadTree(x1, y1, x2, y2, q1, g);
-            quadTree(x2, y1, x3, y2, q2, g);
-            quadTree(x1, y2, x2, y3, q3, g);
-            quadTree(x2, y2, x3, y3, q4, g);
+            quadTree(x1, y1, x2, y2, q1);
+            quadTree(x2, y1, x3, y2, q2);
+            quadTree(x1, y2, x2, y3, q3);
+            quadTree(x2, y2, x3, y3, q4);
         }
-        else
-        {
+        else {
 
             for (int i = 0; i < objects.size(); i++) {
 

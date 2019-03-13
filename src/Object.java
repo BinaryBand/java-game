@@ -25,20 +25,20 @@ abstract class Object {
         this.exists = true;
     }
 
-    double getX() { return this.x; }
-    double getY() { return this.y; }
+    double getX() { return x; }
+    double getY() { return y; }
 
     void setX(double x) { this.x = x; }
     void setY(double y) { this.y = y; }
 
-    int getWidth() { return this.width; }
-    int getHeight() { return this.height; }
+    int getWidth() { return width; }
+    int getHeight() { return height; }
 
     void setWidth(int width) { this.width = width; }
     void setHeight(int height) { this.height = height; }
 
-    double getXSpeed() { return this.xSpeed; }
-    double getYSpeed() { return this.ySpeed; }
+    double getXSpeed() { return xSpeed; }
+    double getYSpeed() { return ySpeed; }
 
     void setXSpeed(double xSpeed) { this.xSpeed = xSpeed; }
     void setYSpeed(double ySpeed) { this.ySpeed = ySpeed; }
@@ -46,12 +46,26 @@ abstract class Object {
     Camera getCam() { return this.cam; }
 
     void kill() { this.exists = false; }
-    boolean getExists() { return this.exists; }
+    boolean getExists() { return exists; }
 
     void addCollision(Object obj) { this.collisions.add(obj); }
-    ArrayList<Object> getCollisions() { return this.collisions; }
+    ArrayList<Object> getCollisions() { return collisions; }
     void clearCollision() { this.collisions.clear(); }
 
     abstract void update();
     abstract void draw(Graphics g);
+
+    void preDraw(Graphics g) {
+
+        int tempX = (int) (x - cam.getX());
+        int tempY = (int) (y - cam.getY());
+
+        if (tempX + width > 0 && tempX < cam.getWidth()) {
+
+            if (tempY + height > 0 && tempY < cam.getHeight()) {
+
+                draw(g);
+            }
+        }
+    }
 }
