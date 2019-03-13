@@ -29,13 +29,16 @@ class Player extends Object {
 
             if (item instanceof Block) {
 
-                setYSpeed(0);
-                setY(item.getY() - getHeight() + 1);
-                setYSpeed(0);
+                if ((getY() + getHeight()) - item.getY() <= 1 + getYSpeed()) {
 
-                if (keys.getUp()) {
+                    setYSpeed(0);
+                    setY(item.getY() - getHeight() + 1);
+                    setYSpeed(0);
 
-                    setYSpeed(-5);
+                    if (keys.getUp()) {
+
+                        setYSpeed(-5);
+                    }
                 }
             }
         }
