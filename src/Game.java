@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -7,10 +8,11 @@ import java.util.TimerTask;
 
 public class Game extends JPanel {
 
+    private float temp = -10;
+
     private Camera cam;
     private Boolean running;
     private int width, height;
-    private java.util.Timer timer;
     private ArrayList<Object> items = new ArrayList<>();
 
     Game(int width, int height) {
@@ -33,19 +35,24 @@ public class Game extends JPanel {
         items.add(player);
         cam.setSubject(player);
 
-        // Create a bunch of random objects
-        items.add(new Block(-50, 100, 100, 100, cam));
+        // Create blocks
+        items.add(new Block(-50, 100, 100, 25, cam, 1));
+        items.add(new Block(125, 75, 100, 25, cam, 0));
+        items.add(new Block(-50, 150, 250, 25, cam, 0));
+        items.add(new Block(-50, 0, 50, 50, cam, 0));
+        items.add(new Block(-50, 100, 50, 50, cam, 0));
+        items.add(new Block(125, 100, 50, 50, cam, 0));
 
         // Set background color
         setBackground(Color.WHITE);
 
         // Frame rate
-        int fps = 60;
+        int fps = 30;
         int delay = 1000 / fps;
 
         running = true;
 
-        timer = new Timer();
+        Timer timer = new Timer();
         timer.schedule(new GameLoop(), 0, delay);
     }
 
@@ -62,17 +69,34 @@ public class Game extends JPanel {
 
     private void loop() {
 
-        // Clear list of items to be removed
-        ArrayList<Object> removedItems = new ArrayList<>();
+        temp += 0.1;
 
-        // Record items that no longer exist
-        for (Object item : items) { if (!item.getExists()) { removedItems.add(item); } }
+        // Clear list of items to be removed and added
+        ArrayList<Object> removedItems = new ArrayList<>();
+        ArrayList<Object> addedObjects = new ArrayList<>();
+
+        // Record items that no longer exist or are being created
+        for (Object item : items) {
+
+            addedObjects.addAll(item.getAddedObjects());
+
+            if (!item.getExists()) {
+                removedItems.add(item);
+            }
+        }
 
         // Remove items that no longer exist
         for (Object item : removedItems) { items.remove(item); }
 
-        // Clear list of collisions for each item
-        for (Object item : items) { item.clearCollision(); }
+        // Add items than must be created
+        items.addAll(addedObjects);
+
+        // Clear list of collisions and added objects for each item
+        for (Object item : items) {
+
+            item.clearCollision();
+            item.clearAddedObjects();
+        }
 
         new GameFunctions().handleCollisions(items);
 
@@ -86,20 +110,50 @@ public class Game extends JPanel {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
+        Graphics2D g2 = (Graphics2D) g;
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        AffineTransform matrix = g2.getTransform(); // Backup
+        double angle = (Math.PI * temp) / 180;
+        g2.rotate(angle);
+
         // Draw each item on the map
-        for (Object item : items) { item.preDraw(g); }
+        for (Object item : items) {
+
+            item.preDraw(g2);
+        }
+
+        g2.setTransform(matrix);
     }
 
     private class GameLoop extends TimerTask {
 
+        @Override
         public void run() {
 
-            loop();
-            repaint();
+            long FPS = 60;
 
-            if (!running) {
+            long timer = System.currentTimeMillis();
+            final double timeF = 1000000000 / FPS;
+            long initialTime = System.nanoTime();
+            double deltaF = 0;
 
-                timer.cancel();
+            while (running) {
+
+                long currentTime = System.nanoTime();
+                deltaF += (currentTime - initialTime) / timeF;
+                initialTime = currentTime;
+
+                if (deltaF >= 1) {
+
+                    loop();
+                    repaint();
+                    deltaF--;
+                }
+
+                if (System.currentTimeMillis() - timer > 1000) {
+
+                    timer += 1000;
+                }
             }
         }
     }
