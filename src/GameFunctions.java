@@ -9,7 +9,7 @@ class GameFunctions {
 
             if (item.getX() < x1) {
 
-                x1 = (int) (item.getX());
+                x1 = item.getX();
             }
         }
 
@@ -18,7 +18,7 @@ class GameFunctions {
 
             if (item.getY() < y1) {
 
-                y1 = (int) (item.getY());
+                y1 = item.getY();
             }
         }
 
@@ -27,7 +27,7 @@ class GameFunctions {
 
             if (item.getX() + item.getWidth() > x2) {
 
-                x2 = (int) (item.getX() + item.getWidth());
+                x2 = item.getX() + item.getWidth();
             }
         }
 
@@ -36,7 +36,7 @@ class GameFunctions {
 
             if (item.getY() + item.getHeight() > y2) {
 
-                y2 = (int) (item.getY() + item.getHeight());
+                y2 = item.getY() + item.getHeight();
             }
         }
 

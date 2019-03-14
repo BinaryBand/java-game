@@ -8,8 +8,6 @@ import java.util.TimerTask;
 
 public class Game extends JPanel {
 
-    private float temp = -10;
-
     private Camera cam;
     private Boolean running;
     private int width, height;
@@ -36,12 +34,13 @@ public class Game extends JPanel {
         cam.setSubject(player);
 
         // Create blocks
-        items.add(new Block(-50, 100, 100, 25, cam, 1));
-        items.add(new Block(125, 75, 100, 25, cam, 0));
-        items.add(new Block(-50, 150, 250, 25, cam, 0));
-        items.add(new Block(-50, 0, 50, 50, cam, 0));
-        items.add(new Block(-50, 100, 50, 50, cam, 0));
-        items.add(new Block(125, 100, 50, 50, cam, 0));
+        items.add(new Block(-50, 100, 100, 25, cam));
+        items.add(new Block(125, 75, 100, 25, cam));
+        items.add(new Block(-50, 150, 250, 25, cam));
+        items.add(new Block(-50, 0, 50, 50, cam));
+        items.add(new Block(-50, 100, 50, 50, cam));
+        items.add(new Block(0, 175, 500, 50, cam));
+        items.add(new Block(450, -125, 50, 300, cam));
 
         // Set background color
         setBackground(Color.WHITE);
@@ -68,8 +67,6 @@ public class Game extends JPanel {
     }
 
     private void loop() {
-
-        temp += 0.1;
 
         // Clear list of items to be removed and added
         ArrayList<Object> removedItems = new ArrayList<>();
@@ -102,19 +99,18 @@ public class Game extends JPanel {
 
         // Update each item on the map
         for (Object item : items) { item.update(); }
-
-        cam.update();
     }
 
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
+        cam.update();
+
         Graphics2D g2 = (Graphics2D) g;
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        AffineTransform matrix = g2.getTransform(); // Backup
-        double angle = (Math.PI * temp) / 180;
-        g2.rotate(angle);
+        AffineTransform old = g2.getTransform();
+        g2.rotate(Math.toRadians(cam.getAngle()), width / 2.0, height / 2.0);
 
         // Draw each item on the map
         for (Object item : items) {
@@ -122,7 +118,8 @@ public class Game extends JPanel {
             item.preDraw(g2);
         }
 
-        g2.setTransform(matrix);
+        g2.setTransform(old);
+        g2.dispose();
     }
 
     private class GameLoop extends TimerTask {
@@ -130,10 +127,10 @@ public class Game extends JPanel {
         @Override
         public void run() {
 
-            long FPS = 60;
+            long FPS = 30;
 
             long timer = System.currentTimeMillis();
-            final double timeF = 1000000000 / FPS;
+            final double timeF = 1000000000.0 / FPS;
             long initialTime = System.nanoTime();
             double deltaF = 0;
 

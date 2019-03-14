@@ -2,11 +2,14 @@ class Camera {
 
     private int x, y, width, height;
     private Object subject;
+    private double angle;
 
     Camera(int width, int height) {
 
         this.width = width;
         this.height = height;
+
+        this.angle = 10;
     }
 
     void update() {
@@ -25,9 +28,12 @@ class Camera {
 
     void setSubject(Object subject) { this.subject = subject; }
 
-    int getWidth() { return this.width; }
-    int getHeight() { return this.height; }
-
     int getX() { return x; }
     int getY() { return y; }
+
+    int getWidth() { return width; }
+    int getHeight() { return height; }
+
+    double getAngle() { return angle; }
+    void setAngle(double angle) { this.angle = angle; }
 }

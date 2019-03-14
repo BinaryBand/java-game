@@ -9,6 +9,7 @@ class Block extends Object {
     @Override
     void update() {
 
+        setX(getX() + (int) (getXSpeed()));
     }
 
     @Override

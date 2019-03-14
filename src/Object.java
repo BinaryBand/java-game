@@ -3,6 +3,7 @@ import java.util.ArrayList;
 
 abstract class Object {
 
+    private ArrayList<Object> addedObjects = new ArrayList<>();
     private ArrayList<Object> collisions = new ArrayList<>();
     private int x, y, width, height;
     private double xSpeed, ySpeed;
@@ -48,9 +49,13 @@ abstract class Object {
     void kill() { this.exists = false; }
     boolean getExists() { return exists; }
 
-    void addCollision(Object obj) { this.collisions.add(obj); }
+    void createObject(Object obj) { addedObjects.add(obj); }
+    ArrayList<Object> getAddedObjects() { return addedObjects; }
+    void clearAddedObjects() { addedObjects.clear(); }
+
+    void addCollision(Object obj) { collisions.add(obj); }
     ArrayList<Object> getCollisions() { return collisions; }
-    void clearCollision() { this.collisions.clear(); }
+    void clearCollision() { collisions.clear(); }
 
     abstract void update();
     abstract void draw(int tempX, int tempY, Graphics g);
