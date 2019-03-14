@@ -1,27 +1,23 @@
-import javax.imageio.ImageIO;
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 
 class Player extends Object {
 
     private double angle;
     private Controls keys;
-    private PlayerSprites sprite;
+    private Sprite sprite;
 
     static private int[] run = new int[] {10, 11, 12, 13, 14, 15, 16};
     static private int[] jump = new int[] {21, 22, 23, 24};
     static private int[] still = new int[] {0, 1, 2, 3};
     private double currentImg = 0;
-    private boolean left = false;
+    private boolean flipped = false;
 
     Player(int x, int y, int width, int height, Camera cam, Controls keys) {
         super(x, y, width, height, cam);
 
         this.angle = 0;
         this.keys = keys;
-        this.sprite = new PlayerSprites();
+        this.sprite = new Sprite("src/res/lucas.png", 9, 40, 48);
     }
 
     @Override
@@ -31,14 +27,7 @@ class Player extends Object {
         if (keys.getRight()) { setXSpeed(5); }
         if (keys.getLeft() == keys.getRight()) { setXSpeed(0); }
 
-        if (keys.getUp() && getYSpeed() < 0) {
-
-            setYSpeed(getYSpeed() + 0.75);
-        }
-        else {
-
-            setYSpeed(getYSpeed() + 1);
-        }
+        updateGravity();
 
         boolean onGround = false;
         for (Object item : getCollisions()) {
@@ -49,39 +38,13 @@ class Player extends Object {
 
                     if (!onGround) {
 
-                        if (keys.getLeft() != keys.getRight()) {
-
-                            currentImg = ((currentImg - run[0] + 0.4) % run.length) + run[0];
-                            if (currentImg < run[0]) { currentImg = run[0]; }
-                            if (keys.getLeft()) { left = true; }
-                            if (keys.getRight()) { left = false; }
-                        } else {
-
-                            currentImg = ((currentImg - still[0] + 0.25) % still.length) + still[0];
-                        }
+                        handleGroundedAnimation();
+                        onGround = true;
                     }
-
-                    onGround = true;
 
                     if (15.0 <= getYSpeed()) {
 
-                        createObject(new Dust(getX() + (getWidth() / 2),
-                                getY() + getHeight(),
-                                (int) getYSpeed(),
-                                getCam(),
-                                -1));
-
-                        createObject(new Dust(getX() + (getWidth() / 2),
-                                getY() + getHeight(),
-                                (int) getYSpeed(),
-                                getCam(),
-                                0));
-
-                        createObject(new Dust(getX() + (getWidth() / 2),
-                                getY() + getHeight(),
-                                (int) getYSpeed(),
-                                getCam(),
-                                1));
+                        createDust();
                     }
 
                     setYSpeed(0);
@@ -120,47 +83,63 @@ class Player extends Object {
         setX((int) (getX() + getXSpeed()));
         setY((int) (getY() + getYSpeed()));
 
-        angle = (angle + getXSpeed()) / 1.2;
-        getCam().setAngle(-angle / 10);
+        angle = (angle + getXSpeed()) / 1.5;
+        getCam().setAngle(-angle / 15);
     }
 
     @Override
     void draw(int tempX, int tempY, Graphics g) {
 
-        sprite.draw(tempX, tempY, g, (int) currentImg, left);
+        sprite.draw(tempX, tempY, g, (int) currentImg, flipped);
     }
 
-    class PlayerSprites {
+    private void updateGravity() {
 
-        private BufferedImage image;
+        if (keys.getUp() && getYSpeed() < 0) {
 
-        PlayerSprites() {
-
-            try {
-                image = ImageIO.read(new File("src\\res\\lucas.png"));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            setYSpeed(getYSpeed() + 0.65);
         }
+        else {
 
-        void draw(int tempX, int tempY, Graphics g, int frame, boolean left) {
+            setYSpeed(getYSpeed() + 1.2);
+        }
+    }
 
-            int columns = 9;
+    private void handleGroundedAnimation() {
 
-            int width = 360 / 9;
-            int height = 144 / 3;
+        if (keys.getLeft() != keys.getRight()) {
 
-            int frameX = (frame % columns) * width;
-            int frameY = (frame / columns) * height;
+            currentImg = ((currentImg - run[0] + 0.4) % run.length) + run[0];
+            if (currentImg < run[0]) { currentImg = run[0]; }
+            if (keys.getLeft()) { flipped = true; }
+            if (keys.getRight()) { flipped = false; }
+        } else {
 
-            if (!left) {
-                g.drawImage(image, tempX, tempY, tempX + width, tempY + height,
-                        frameX, frameY, frameX + width, frameY + height, null);
-            }
-            else {
-                g.drawImage(image, tempX, tempY, tempX + width, tempY + height,
-                        frameX + width, frameY, frameX, frameY + height, null);
-            }
+            currentImg = ((currentImg - still[0] + 0.25) % still.length) + still[0];
+        }
+    }
+
+    private void createDust() {
+
+        if (15.0 <= getYSpeed()) {
+
+            createObject(new Dust(getX() + (getWidth() / 2),
+                    getY() + getHeight(),
+                    (int) getYSpeed(),
+                    getCam(),
+                    -1));
+
+            createObject(new Dust(getX() + (getWidth() / 2),
+                    getY() + getHeight(),
+                    (int) getYSpeed(),
+                    getCam(),
+                    0));
+
+            createObject(new Dust(getX() + (getWidth() / 2),
+                    getY() + getHeight(),
+                    (int) getYSpeed(),
+                    getCam(),
+                    1));
         }
     }
 

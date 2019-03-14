@@ -105,6 +105,11 @@ public class Game extends JPanel {
         cam.update();
 
         Graphics2D g2 = (Graphics2D) g;
+
+//        AffineTransform at = new AffineTransform();
+//        at.scale(1.5, 1.5);
+//        g2.transform(at);
+
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         AffineTransform old = g2.getTransform();
         g2.rotate(Math.toRadians(cam.getAngle()), width / 2.0, height / 2.0);
