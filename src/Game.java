@@ -33,11 +33,10 @@ public class Game extends JPanel {
         cam.setSubject(player);
 
         // Create blocks
-        items.add(new Block(-50, 100, 100, 25, cam));
+        items.add(new Block(-50, 125, 100, 25, cam));
         items.add(new Block(125, 75, 100, 25, cam));
-        items.add(new Block(-50, 150, 250, 25, cam));
-        items.add(new Block(0, 175, 500, 50, cam));
-        items.add(new Block(450, -125, 50, 300, cam));
+        items.add(new Block(300, 25, 100, 25, cam));
+        items.add(new Block(-50, 200, 450, 50, cam));
 
         // Set background color
         setBackground(Color.WHITE);
