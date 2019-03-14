@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
-
 public class Game extends JPanel {
 
     private Camera cam;
@@ -27,7 +26,7 @@ public class Game extends JPanel {
         cam = new Camera(width, height);
 
         // Create a player object
-        Player player = new Player(0, 0, 50, 50, cam, setControls());
+        Player player = new Player(0, 0, 37, 47, cam, setControls());
 
         // Add player to objects list and set it as the subject for the camera
         items.add(player);
@@ -37,8 +36,6 @@ public class Game extends JPanel {
         items.add(new Block(-50, 100, 100, 25, cam));
         items.add(new Block(125, 75, 100, 25, cam));
         items.add(new Block(-50, 150, 250, 25, cam));
-        items.add(new Block(-50, 0, 50, 50, cam));
-        items.add(new Block(-50, 100, 50, 50, cam));
         items.add(new Block(0, 175, 500, 50, cam));
         items.add(new Block(450, -125, 50, 300, cam));
 

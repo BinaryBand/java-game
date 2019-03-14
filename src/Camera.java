@@ -9,7 +9,7 @@ class Camera {
         this.width = width;
         this.height = height;
 
-        this.angle = 10;
+        this.angle = 0;
     }
 
     void update() {

@@ -44,9 +44,9 @@ abstract class Object {
     void setXSpeed(double xSpeed) { this.xSpeed = xSpeed; }
     void setYSpeed(double ySpeed) { this.ySpeed = ySpeed; }
 
-    Camera getCam() { return this.cam; }
+    Camera getCam() { return cam; }
 
-    void kill() { this.exists = false; }
+    void destroy() { exists = false; }
     boolean getExists() { return exists; }
 
     void createObject(Object obj) { addedObjects.add(obj); }
