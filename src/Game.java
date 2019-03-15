@@ -26,16 +26,20 @@ public class Game extends JPanel {
         cam = new Camera(width, height);
 
         // Create a player object
-        Player player = new Player(0, 0, 37, 47, cam, setControls());
+        Player player = new Player(0, -100, 37, 47, cam, setControls());
+        Enemy enemy = new Enemy(175, -200, 40, 40, cam);
+
+        cam.addSubject(player);
+        cam.addSubject(enemy);
 
         // Add player to objects list and set it as the subject for the camera
         items.add(player);
-        cam.setSubject(player);
+        items.add(enemy);
 
         // Create blocks
-        items.add(new Block(-50, 125, 100, 25, cam));
-        items.add(new Block(125, 75, 100, 25, cam));
-        items.add(new Block(300, 25, 100, 25, cam));
+        items.add(new Block(-50, 125, 100, 20, cam));
+        items.add(new Block(125, 75, 100, 20, cam));
+        items.add(new Block(300, 25, 100, 20, cam));
         items.add(new Block(-50, 200, 450, 50, cam));
 
         // Set background color
@@ -47,8 +51,7 @@ public class Game extends JPanel {
 
         running = true;
 
-        Timer timer = new Timer();
-        timer.schedule(new GameLoop(), 0, delay);
+        new Timer().schedule(new GameLoop(), 0, delay);
     }
 
     private Controls setControls() {
@@ -74,6 +77,7 @@ public class Game extends JPanel {
             addedObjects.addAll(item.getAddedObjects());
 
             if (!item.getExists()) {
+
                 removedItems.add(item);
             }
         }
@@ -105,18 +109,18 @@ public class Game extends JPanel {
 
         Graphics2D g2 = (Graphics2D) g;
 
-//        AffineTransform at = new AffineTransform();
-//        at.scale(1.5, 1.5);
-//        g2.transform(at);
+        g2.translate(width / 2, height / 2);
+        g2.scale(cam.getZoom(), cam.getZoom());
+        g2.translate(-width / 2, -height / 2);
 
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         AffineTransform old = g2.getTransform();
         g2.rotate(Math.toRadians(cam.getAngle()), width / 2.0, height / 2.0);
 
         // Draw each item on the map
-        for (Object item : items) {
+        for (int i = 0; i < items.size(); i++) {
 
-            item.preDraw(g2);
+            items.get(i).preDraw(g2);
         }
 
         g2.setTransform(old);

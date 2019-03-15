@@ -23,8 +23,8 @@ class Player extends Object {
     @Override
     void update() {
 
-        if (keys.getLeft()) { setXSpeed(-5); }
-        if (keys.getRight()) { setXSpeed(5); }
+        if (keys.getLeft()) { setXSpeed(-6); }
+        if (keys.getRight()) { setXSpeed(6); }
         if (keys.getLeft() == keys.getRight()) { setXSpeed(0); }
 
         updateGravity();
@@ -42,7 +42,7 @@ class Player extends Object {
                         onGround = true;
                     }
 
-                    if (15.0 <= getYSpeed()) {
+                    if (20.0 <= getYSpeed()) {
 
                         createDust();
                     }
@@ -54,6 +54,11 @@ class Player extends Object {
 
                         setYSpeed(-10);
                     }
+
+                    if (keys.getDown() && item.getHeight() < 25) {
+
+                        setY(getY() + 2);
+                    }
                 }
             }
         }
@@ -64,7 +69,7 @@ class Player extends Object {
 
                 currentImg = jump[0];
             }
-            else if (getYSpeed() <= 15) {
+            else if (getYSpeed() <= 20) {
 
                 currentImg = jump[1];
             }
@@ -83,6 +88,12 @@ class Player extends Object {
         setX((int) (getX() + getXSpeed()));
         setY((int) (getY() + getYSpeed()));
 
+        if (getY() >= 500) {
+
+            setX(0);
+            setY(-100);
+        }
+
         angle = (angle + getXSpeed()) / 1.5;
         getCam().setAngle(-angle / 15);
     }
@@ -97,7 +108,7 @@ class Player extends Object {
 
         if (keys.getUp() && getYSpeed() < 0) {
 
-            setYSpeed(getYSpeed() + 0.65);
+            setYSpeed(getYSpeed() + 0.6);
         }
         else {
 

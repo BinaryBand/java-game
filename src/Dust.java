@@ -8,6 +8,7 @@ class Dust extends Object {
         super(x, y, size, size, cam);
 
         setX(getX() - (getWidth() / 2));
+        setY(getY() - (getHeight() / 4));
         setXSpeed(xSpeed);
 
         alternate = false;

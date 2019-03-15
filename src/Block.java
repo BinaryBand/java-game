@@ -15,8 +15,9 @@ class Block extends Object {
     @Override
     void draw(int tempX, int tempY, Graphics g) {
 
-        g.setColor(Color.black);
-        g.fillRect(tempX,
+        g.setColor(Color.darkGray);
+
+        g.drawRect(tempX,
                 tempY,
                 getWidth(),
                 getHeight());
