@@ -7,6 +7,7 @@ import java.util.TimerTask;
 
 public class Game extends JPanel {
 
+    private Boolean alternate;
     private Camera cam;
     private Boolean running;
     private int width, height;
@@ -16,6 +17,8 @@ public class Game extends JPanel {
 
         this.width = width;
         this.height = height;
+
+        alternate = true;
 
         createGame();
     }
@@ -37,9 +40,9 @@ public class Game extends JPanel {
         items.add(enemy);
 
         // Create blocks
-        items.add(new Block(-50, 125, 100, 20, cam));
-        items.add(new Block(125, 75, 100, 20, cam));
-        items.add(new Block(300, 25, 100, 20, cam));
+        items.add(new Block(-50, 75, 100, 20, cam));
+        items.add(new Block(125, 125, 100, 20, cam));
+        items.add(new Block(300, 75, 100, 20, cam));
         items.add(new Block(-50, 200, 450, 50, cam));
 
         // Set background color
@@ -118,9 +121,9 @@ public class Game extends JPanel {
         g2.rotate(Math.toRadians(cam.getAngle()), width / 2.0, height / 2.0);
 
         // Draw each item on the map
-        for (int i = 0; i < items.size(); i++) {
+        for (Object item : items) {
 
-            items.get(i).preDraw(g2);
+            item.preDraw(g2);
         }
 
         g2.setTransform(old);
@@ -135,7 +138,7 @@ public class Game extends JPanel {
             long FPS = 30;
 
             long timer = System.currentTimeMillis();
-            final double timeF = 1000000000.0 / FPS;
+            final double timeF = 500000000.0 / FPS;
             long initialTime = System.nanoTime();
             double deltaF = 0;
 
@@ -147,8 +150,17 @@ public class Game extends JPanel {
 
                 if (deltaF >= 1) {
 
-                    loop();
-                    repaint();
+                    if (alternate) {
+
+                        loop();
+                    }
+                    else {
+
+                        repaint();
+                    }
+
+                    alternate = !alternate;
+
                     deltaF--;
                 }
 

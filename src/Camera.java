@@ -2,14 +2,14 @@ import java.util.ArrayList;
 
 class Camera {
 
-    private int x, y, width, height;
+    private int x, y, screenWith, screenHeight;
     private ArrayList<Object> subjects = new ArrayList<>();
     private double angle, zoom;
 
     Camera(int width, int height) {
 
-        this.width = width;
-        this.height = height;
+        this.screenWith = width;
+        this.screenHeight = height;
 
         this.angle = 0;
         this.zoom = 1;
@@ -47,21 +47,18 @@ class Camera {
                 subjects.remove(item);
             }
 
-            tempX -= width;
-            tempY -= height;
-
-            x = ((tempX / subjects.size()) + getX()) / 2;
-            y = ((tempY / subjects.size()) + getY()) / 2;
+            x = ((tempX / subjects.size()) + x) / 2;
+            y = ((tempY / subjects.size()) + y) / 2;
         }
     }
 
     void addSubject(Object subject) { subjects.add(subject); }
 
-    int getX() { return x; }
-    int getY() { return y; }
+    int getX() { return x - screenWith / 2; }
+    int getY() { return y - screenHeight / 2; }
 
-    int getWidth() { return width; }
-    int getHeight() { return height; }
+    int getWidth() { return screenWith; }
+    int getHeight() { return screenHeight; }
 
     double getAngle() { return angle; }
     void setAngle(double angle) { this.angle = angle; }
