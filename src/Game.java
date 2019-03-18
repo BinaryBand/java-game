@@ -102,13 +102,13 @@ public class Game extends JPanel {
 
         // Update each item on the map
         for (Object item : items) { item.update(); }
+
+        cam.update();
     }
 
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-
-        cam.update();
 
         Graphics2D g2 = (Graphics2D) g;
 
@@ -150,14 +150,8 @@ public class Game extends JPanel {
 
                 if (deltaF >= 1) {
 
-                    if (alternate) {
-
-                        loop();
-                    }
-                    else {
-
-                        repaint();
-                    }
+                    if (alternate) { loop(); }
+                    else { repaint(); }
 
                     alternate = !alternate;
 
