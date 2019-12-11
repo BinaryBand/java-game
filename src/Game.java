@@ -121,8 +121,9 @@ public class Game extends JPanel {
         g2.rotate(Math.toRadians(cam.getAngle()), width / 2.0, height / 2.0);
 
         // Draw each item on the map
-        for (Object item : items) {
+        for (int i = 0; i < items.size(); i++) {
 
+            Object item = items.get(i);
             item.preDraw(g2);
         }
 
@@ -150,6 +151,7 @@ public class Game extends JPanel {
 
                 if (deltaF >= 1) {
 
+                    // Each loop alternates updating the objects and drawing
                     if (alternate) { loop(); }
                     else { repaint(); }
 
