@@ -17,7 +17,7 @@ class Player extends Object {
 
         this.angle = 0;
         this.keys = keys;
-        this.sprite = new Sprite("src/res/lucas.png", 9, 40, 48);
+        this.sprite = new Sprite("res/lucas.png", 9, 40, 48);
     }
 
     @Override
