@@ -1,6 +1,15 @@
 import java.awt.EventQueue;
 import javax.swing.JFrame;
 
+/**
+* <h1>Java Game Template</h1>
+* This is a game template for a 2D platformer created
+* with Java.
+*
+* @author Shane Davenport
+* @version 1.0
+* @since 2019-02-27
+*/
 public class Application extends JFrame {
 
     private int width, height;
